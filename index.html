@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Joren De Cock</title>
+    <style>
+        /* ========== BASIS STIJLEN ========== */
+        /* Reset alle standaard marges en padding voor consistentie */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+        }
+
+        /* Basis body stijlen */
+        body {
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* ========== NAVIGATIEBALK ========== */
+        /* Vaste navigatiebalk bovenaan het scherm */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 100;
+            background-color: rgba(255,255,255,0.9);
+            backdrop-filter: blur(5px);
+            transition: transform 0.3s ease;
+        }
+        
+        /* Klasse om navigatie te verbergen bij scrollen */
+        nav.hidden {
+            transform: translateY(-100%);
+        }
+    
+        /* Container voor logo en ondertitel */
+        .logo-container {
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        /* Hoofdlogo tekst */
+        .logo {
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            line-height: 1.2;
+        }
+
+        /* Ondertitel onder logo */
+        .subtitle {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            margin-top: 2px;
+            letter-spacing: 0.5px;
+        }
+
+        /* Terug knop in navigatie */
+        .back-btn {
+            background: none;
+            border: none;
+            font-size: 1rem;
+            cursor: pointer;
+            color: #333;
+            padding: 10px 20px;
+            border-radius: 20px;
+            transition: background-color 0.3s;
+        }
+
+        .back-btn:hover {
+            background-color: rgba(0,0,0,0.1);
+        }
+
+        /* ========== PROJECTEN GRID ========== */
+        /* Grid container voor alle projecten */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1px;
+            background-color: #ddd;
+            margin-top: 80px; /* Ruimte voor vaste navigatie */
+        }
+
+        /* Responsieve aanpassing voor mobiel */
+        @media (max-width: 768px) {
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Individueel project item */
+        .project-item {
+            position: relative;
+            height: 70vh;
+            min-height: 500px;
+            background-color: #fff;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        /* Project afbeelding */
+        .project-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        /* Zoom effect bij hover */
+        .project-item:hover .project-img {
+            transform: scale(1.03);
+        }
+
+        /* Informatie overlay onderaan project */
+        .project-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 20px;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            color: white;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        /* Toon info bij hover */
+        .project-item:hover .project-info {
+            opacity: 1;
+        }
+
+        /* Project titel in overlay */
+        .project-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            padding-left: 10px;
+        }
+
+        /* ========== PROJECT DETAIL PAGINA ========== */
+        /* Container voor project detail */
+        .project-detail {
+            padding: 100px 10% 150px;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        /* Header sectie met titel en metadata */
+        .project-header {
+            margin-bottom: 50px;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Project titel */
+        .project-header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            font-weight: 400;
+            padding-left: 0;
+        }
+
+        /* Project beschrijving */
+        .project-description {
+            max-width: 600px;
+            margin-bottom: 50px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            text-align: left;
+            padding-left: 0;
+        }
+
+        /* Metadata container (jaar, type) */
+        .project-meta {
+            display: flex;
+            gap: 30px;
+            margin-bottom: 50px;
+            font-size: 0.9rem;
+            padding-left: 0;
+        }
+
+        /* Galerij met project afbeeldingen */
+        .project-gallery {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0;
+            width: 100vw;
+            margin-left: calc(-50vw + 50%);
+        }
+
+        /* Responsieve aanpassing voor mobiel */
+        @media (max-width: 768px) {
+            .project-gallery {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Individuele galerij afbeelding */
+        .gallery-item {
+            width: 100%;
+            height: auto;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        /* Zoom effect bij hover */
+        .gallery-item:hover {
+            transform: scale(1.01);
+        }
+
+        /* ========== FOOTER ========== */
+        /* Footer container */
+        footer {
+            padding: 50px 10%;
+            text-align: center;
+        }
+
+        /* Instagram link in footer */
+        .instagram-link {
+            text-decoration: none;
+            color: #333;
+            font-size: 0.9rem;
+            display: inline-block;
+            margin-bottom: 30px;
+        }
+
+        /* ========== TERUG NAAR BOVEN KNOP ========== */
+        /* Vaste knop rechtsonder */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background-color: #333;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 10;
+        }
+
+        /* Klasse om knop zichtbaar te maken */
+        .back-to-top.visible {
+            opacity: 1;
+        }
+
+        /* Verberg elementen */
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- ========== NAVIGATIEBALK ========== -->
+    <nav id="main-nav">
+        <div class="logo-container" id="home-link">
+            <div class="logo">JOREN DE COCK</div>
+            <div class="subtitle">Architectuur student - KU Leuven Sint-Lucas Gent</div>
+        </div>
+        <button class="back-btn hidden" id="back-btn">← Terug</button>
+    </nav>
+
+    <!-- ========== PROJECTEN GRID ========== -->
+    <div class="projects-grid" id="projects-container">
+        <!-- Project items worden hier dynamisch ingeladen via JavaScript -->
+    </div>
+
+    <!-- ========== PROJECT DETAIL CONTAINER ========== -->
+    <div id="project-detail-container" class="hidden">
+        <!-- Project detail wordt hier ingeladen -->
+    </div>
+
+    <!-- ========== FOOTER ========== -->
+    <footer id="main-footer">
+        <a href="https://www.instagram.com/jorendecock" class="instagram-link">Instagram</a>
+    </footer>
+
+    <!-- ========== TERUG NAAR BOVEN KNOP ========== -->
+    <a href="#" class="back-to-top">↑</a>
+
+    <script>
+        // ========== PROJECTEN DATA ==========
+        const projects = [
+            {
+                id: 1,
+                title: "ZELFSTANDIGWERK",
+                image: "images/foto10a.JPEG",
+                description: "Samen met Zjef De Locht ontwierpen we een sokkel voor het Meiserplein in Brussel. De sokkel weerspiegelt de texturen die we terugvonden op het plein. Deze deelden we op in categorieën en lieten we in onze sokkel tot levend komen door hoogte, kleur en volgorde.",
+                year: "04042025",
+                type: "Ontwerp II",
+                images: [
+                    "images/foto10a.JPEG",
+                    "images/foto10b.JPEG",
+                    "images/foto10c.JPEG",
+                    "images/foto10d.JPEG",
+                    "images/foto10e.JPEG",
+                    "images/foto10f.JPEG",
+                    "images/foto10g.JPEG"
+                ]
+            },
+            {
+                id: 2,
+                title: "PLEIN-PLACE",
+                image: "images/foto9a.JPEG",
+                description: "Samen met Zjef De Locht ontwierpen we een sokkel voor het Meiserplein in Brussel. De sokkel weerspiegelt de texturen die we terugvonden op het plein. Deze deelden we op in categorieën en lieten we in onze sokkel tot levend komen door hoogte, kleur en volgorde.",
+                year: "04042025",
+                type: "Expressie II",
+                images: [
+                    "images/foto9a.JPEG",
+                    "images/foto9b.JPEG",
+                    "images/foto9c.JPEG",
+                    "images/foto9d.JPEG",
+                    "images/foto9e.JPEG",
+                    "images/foto9f.JPEG"
+                ]
+            },
+            {
+                id: 3,
+                title: "SAMEN WONEN/WERKEN",
+                image: "images/foto8a.JPEG",
+                description: "Aan Dok Noord in Gent bevindt zich een kunstgalerij genaamd 019, gehuisvest in een voormalige staalfabriek. Het doel was om deze plek deels om te vormen tot een werkruimte waar kunst gemaakt én tentoongesteld kan worden, en deels tot wooneenheden voor kunstenaars. Een bijkomende uitdaging waren de twee richtlijnen waar ik me aan moest houden: Kopse kanten open en Tuin rondom rond, binnen wordt buiten wordt buiten. Deze zinnen vormden het uitgangspunt voor mijn ontwerpbenadering. Ik probeerde een sfeer te creëren waarin je, op elk moment en op elke plek — binnen of buiten — niet helemaal zeker weet of je je nu echt binnen bevindt, of juist buiten.",
+                year: "28032025",
+                type: "Ontwerp I",
+                images: [
+                    "images/foto8a.JPEG",
+                    "images/foto8b.JPEG",
+                    "images/foto8c.JPEG",
+                    "images/foto8d.JPEG",
+                    "images/foto8e.JPEG",
+                    "images/foto8f.JPEG",
+                    "images/foto8g.JPEG",
+                    "images/foto8h.JPEG",
+                    "images/foto8i.JPEG",
+                    "images/foto8j.JPEG",
+                    "images/foto8k.JPEG",
+                    "images/foto8l.JPEG"
+                ]
+            },
+            {
+                id: 4,
+                title: "KNOOP TEGEN-KNOOP",
+                image: "images/foto7a.JPEG",
+                description: "Met afval dat we vonden in de Rabotwijk in Gent, maakten we een knoop, sokkel of assemblage. Hierbij hergebruikten we straatafval en transformeerden dit tot iets nieuws.In het tweede deel van het proces creëerden we een tegenknoop: een element dat een specifiek aspect van de oorspronkelijke assemblage uitlicht. Deze tegenknoop zet het werk in een nieuw perspectief en zorgt voor een andere focus in vergelijking met de sokkel. Tegelijk blijft het verschil tussen de knoop en de tegenknoop duidelijk zichtbaar. In mijn geval lichte ik de bogen van de knoop uit door deze vorm uit te beitellen.",
+                year: "07032025",
+                type: "Expressie I",
+                images: [
+                    "images/foto7a.JPEG",
+                    "images/foto7b.JPEG",
+                    "images/foto7c.JPEG",
+                    "images/foto7d.JPEG",
+                    "images/foto7e.JPEG",
+                    "images/foto7f.JPEG",
+                    "images/foto7g.JPEG",
+                    "images/foto7h.JPEG"
+                ]
+            },
+            {
+                id: 5,
+                title: "COMPACT WONEN",
+                image: "images/foto6a.JPEG",
+                description: "Om van Heusden naar de Gentse Meersen te geraken, is het momenteel onaangenaam om er te voet of met de fiets naartoe te gaan. Als oplossing stellen we de bouw van een fietsbrug over de Schelde voor, ter hoogte van de ingang van de Meersen. Aan deze brug wordt een compacte woning van 80 m2 toegevoegd, bedoeld voor twee personen, waarvan één instaat voor het beheer van de brug. Omdat de woning op een slibrijke ondergrond komt te staan, is er gekozen voor te starten vanuit een paalfundering. We mochten echter ook niet volledig kiezen hoe we begonnen aan het gebouw we starten met een referentie van een bestaand gebouw. Hier was dit de Nordic Pavilioen in Venice van Sverre Fehn.",
+                year: "07012025",
+                type: "Ontwerp I",
+                images: [
+                    "images/foto6a.JPEG",
+                    "images/foto6b.JPEG",
+                    "images/foto6c.JPEG",
+                    "images/foto6d.JPEG",
+                    "images/foto6e.JPEG",
+                    "images/foto6f.JPEG",
+                    "images/foto6g.JPEG",
+                    "images/foto6h.JPEG",
+                    "images/foto6i.jpg"
+                ]
+            },
+            {
+                id: 6,
+                title: "GRAF",
+                image: "images/foto5a.JPEG",
+                description: "Tekening van een graf en zijn omgeving in de Westbegraafplaats in Gent. Waarbij het meetbare en niet-meetbare samenkomt.",
+                year: "22112024",
+                type: "Media I",
+                images: [
+                    "images/foto5a.JPEG",
+                    "images/foto5b.JPEG",
+                    "images/foto5c.JPEG",
+                    "images/foto5d.JPEG"
+                ]
+            },
+            {
+                id: 7,
+                title: "3X3XA4",
+                image: "images/foto4a.JPEG",
+                description: "3 tekening van telkens 3XA4 van ondermeer de plantentuin in Meise.",
+                year: "22112024",
+                type: "Media I",
+                images: [
+                    "images/foto4a.JPEG",
+                    "images/foto4b.JPEG",
+                    "images/foto4c.JPEG"
+                ]
+            },
+            {
+                id: 8,
+                title: "BOX BOX BOX",
+                image: "images/foto3a.JPEG",
+                description: "In deze tekenopdracht moesten we vier houtskooltekeningen maken van gestapelde kartonnen dozen. De opdracht was om deze zo realistisch mogelijk weer te geven, met behulp van diverse tekentechnieken.",
+                year: "22112024",
+                type: "Media I",
+                images: [
+                    "images/foto3a.JPEG",
+                    "images/foto3b.JPEG",
+                    "images/foto3c.JPEG",
+                    "images/foto3d.JPEG"
+                ]
+            },
+            {
+                id: 9,
+                title: "BAR",
+                image: "images/foto2a.JPEG",
+                description: "We moesten in de binnentuin van het klooster in de Hoogstraat in Gent een bar ontwerpen. Daarbij was het belangrijk om, via observaties van de tuin, bepaalde kenmerken te selecteren waarmee je het ontwerp van de bar kon laten samenvloeien met de bestaande structuur, zodat het geheel past binnen het bestaande gebouw. Ik heb ervoor gekozen om mijn bar in een van de hoeken van de binnentuin te plaatsen. Als vertrekpunt gebruikte ik de afmetingen tussen elementen op de gevel, en nam die over als basis voor de afmetingen van mijn ontwerp. Daarnaast heb ik twee witte lijnen die over de volledige gevel van het binnenhof lopen, doorgetrokken in het ontwerp van mijn bar, zodat er een visuele continuïteit ontstaat tussen oud en nieuw.",
+                year: "29102024",
+                type: "Ontwerp I",
+                images: [
+                    "images/foto2a.JPEG",
+                    "images/foto2b.JPEG",
+                    "images/foto2c.JPEG",
+                    "images/foto2d.JPEG",
+                    "images/foto2e.JPEG",
+                    "images/foto2f.JPEG"
+                ]
+            },
+            {
+                id: 10,
+                title: "EXTENTIE 1OP1/VERSCHAALD",
+                image: "images/foto1a.JPEG",
+                description: "De eerste ontwerpopdracht bestond uit twee delen. In deel één ontwierp ik samen met medestudent Tristen Cremers een extensie die aansloot bij het klooster aan de Hoogstraat, de locatie van ons project. In deel twee werkten we individueel verder: we vertaalden kenmerken van de gezamenlijke extensie naar abstracte, verschaalde vormen. Tegen het einde kregen deze opnieuw een gevoel van schaal door toevoeging van schaalfiguren.",
+                year: "11102024",
+                type: "Ontwerp I",
+                images: [
+                    "images/foto1a.JPEG",
+                    "images/foto1b.JPEG",
+                    "images/foto1c.JPEG",
+                    "images/foto1d.JPEG",
+                    "images/foto1e.JPEG",
+                    "images/foto1f.JPEG",
+                    "images/foto1g.JPEG",
+                    "images/foto1h.JPEG"
+                ]
+            }
+        ];
+
+        // ========== STATE MANAGEMENT ==========
+        let currentView = 'home'; // 'home', 'project', 'about'
+
+        // ========== INITIALISATIE ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeHomeLink();
+            initializeBackButton();
+            loadProjects();
+            setupScrollToTopButton();
+            setupNavScrollBehavior();
+        });
+
+        // ========== FUNCTIES ==========
+        function initializeHomeLink() {
+            document.getElementById('home-link').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (currentView === 'home') {
+                    openHomeDetail();
+                } else {
+                    showHome();
+                }
+            });
+        }
+
+        function initializeBackButton() {
+            document.getElementById('back-btn').addEventListener('click', function(e) {
+                e.preventDefault();
+                showHome();
+            });
+        }
+
+        function loadProjects() {
+            const projectsContainer = document.getElementById('projects-container');
+            
+            projects.forEach(project => {
+                const projectItem = document.createElement('div');
+                projectItem.className = 'project-item';
+                projectItem.innerHTML = `
+                    <img src="${project.image}" alt="${project.title}" class="project-img">
+                    <div class="project-info">
+                        <h2 class="project-title">${project.title}</h2>
+                        <p>${project.type} • ${project.year}</p>
+                    </div>
+                `;
+                
+                projectItem.addEventListener('click', function() {
+                    openProjectDetail(project);
+                });
+                
+                projectsContainer.appendChild(projectItem);
+            });
+        }
+
+        function setupScrollToTopButton() {
+            const backToTopBtn = document.querySelector('.back-to-top');
+            
+            window.addEventListener('scroll', function() {
+                if (window.pageYOffset > 300) {
+                    backToTopBtn.classList.add('visible');
+                } else {
+                    backToTopBtn.classList.remove('visible');
+                }
+            });
+
+            backToTopBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.scrollTo({top: 0, behavior: 'smooth'});
+            });
+        }
+
+        function setupNavScrollBehavior() {
+            let lastScroll = 0;
+            const nav = document.getElementById('main-nav');
+            
+            window.addEventListener('scroll', function() {
+                const currentScroll = window.pageYOffset;
+                
+                if (currentScroll > 100) {
+                    if (currentScroll > lastScroll) {
+                        nav.classList.add('hidden');
+                    } else {
+                        nav.classList.remove('hidden');
+                    }
+                } else {
+                    nav.classList.remove('hidden');
+                }
+                lastScroll = currentScroll;
+            });
+        }
+
+        function showHome() {
+            currentView = 'home';
+            document.getElementById('projects-container').classList.remove('hidden');
+            document.getElementById('main-footer').classList.remove('hidden');
+            document.getElementById('project-detail-container').classList.add('hidden');
+            document.getElementById('back-btn').classList.add('hidden');
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        function openHomeDetail() {
+            currentView = 'about';
+            document.getElementById('projects-container').classList.add('hidden');
+            document.getElementById('main-footer').classList.add('hidden');
+            document.getElementById('back-btn').classList.remove('hidden');
+            
+            const detailContainer = document.getElementById('project-detail-container');
+            detailContainer.innerHTML = `
+                <div class="project-detail">
+                    <div class="project-header">
+                        <h1>JOREN DE COCK</h1>
+                        <div class="project-meta">
+                        </div>
+                    </div>
+                    
+                    <div class="project-description">
+                        <p>Op deze website verzamel ik verschillende projecten die ik als architect in opleiding aan de KU Leuven, faculteit Architectuur in Gent, heb gemaakt zowel binnen als buiten de opleiding. Je kan het zien als een soort portfolio van werk waar ik trots op ben. Bij sommige projecten vloeiden er meer uren en zweet in dan bij andere. Naast schoolopdrachten vind je hier misschien ook persoonlijke projecten die voortkomen uit mijn eigen interesse. Die hebben misschien niet rechtstreeks te maken met mijn opleiding, maar hebben wel altijd een link met mijn richting architectuur. Hoewel ik deze site in de eerste plaats voor mezelf heb opgebouwd, is iedereen welkom om een kijkje te nemen. </p>
+                    </div>
+                    
+                    <div class="project-gallery">
+                        <img src="images/foto0b.jpg" alt="Persoonlijke foto 1" class="gallery-item">
+                        <img src="images/foto0c.JPEG" alt="Persoonlijke foto 2" class="gallery-item">
+                        <img src="images/foto0d.jpg" alt="Persoonlijke foto 3" class="gallery-item">
+                        <img src="images/foto0e.JPEG" alt="Persoonlijke foto 4" class="gallery-item">
+                    </div>
+                </div>
+
+                <footer>
+                    <a href="https://www.instagram.com/jorendecock" class="instagram-link">Instagram</a>
+                </footer>
+            `;
+            
+            detailContainer.classList.remove('hidden');
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        function openProjectDetail(project) {
+            currentView = 'project';
+            document.getElementById('projects-container').classList.add('hidden');
+            document.getElementById('main-footer').classList.add('hidden');
+            document.getElementById('back-btn').classList.remove('hidden');
+            
+            const detailContainer = document.getElementById('project-detail-container');
+            detailContainer.innerHTML = `
+                <div class="project-detail">
+                    <div class="project-header">
+                        <h1>${project.title}</h1>
+                        <div class="project-meta">
+                            <span>${project.type}</span>
+                            <span>${project.year}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="project-description">
+                        <p>${project.description}</p>
+                    </div>
+                    
+                    <div class="project-gallery">
+                        ${project.images.map(image => `
+                            <img src="${image}" alt="${project.title}" class="gallery-item">
+                        `).join('')}
+                    </div>
+                </div>
+
+                <footer>
+                    <a href="https://www.instagram.com/jorendecock" class="instagram-link">Instagram</a>
+                </footer>
+            `;
+            
+            detailContainer.classList.remove('hidden');
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+    </script>
+</body>
+</html>
