@@ -1,0 +1,81 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ============================================================
+   DESIGN SYSTEEM — clean zwart/wit, geïnspireerd op
+   oliviergoethals.info. Pas waardes hier aan om het uitzicht
+   van de hele website te veranderen.
+   ============================================================ */
+
+@theme inline {
+  --font-sans:
+    "EB Garamond", "Times New Roman", Times, serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, monospace;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-primary: var(--foreground);
+  --color-primary-foreground: var(--background);
+  --color-card: var(--background);
+  --color-card-foreground: var(--foreground);
+  --color-popover: var(--background);
+  --color-popover-foreground: var(--foreground);
+  --color-secondary: var(--muted);
+  --color-secondary-foreground: var(--foreground);
+  --color-accent-foreground: var(--background);
+  --color-destructive: oklch(0.55 0.22 27);
+  --color-destructive-foreground: var(--background);
+  --color-input: var(--border);
+  --color-ring: var(--foreground);
+  --color-ring-offset-background: var(--background);
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0 0 0);
+  --muted: oklch(0.96 0 0);
+  --muted-foreground: oklch(0.45 0 0);
+  --border: oklch(0.9 0 0);
+  --accent: oklch(0 0 0);
+  --radius: 0px;
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+  html,
+  body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    font-size: 15px;
+    line-height: 1.45;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+}
+
+/* actieve nav: lijntje onder de titel (geen zwarte balk) */
+@utility nav-active {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 6px;
+}
